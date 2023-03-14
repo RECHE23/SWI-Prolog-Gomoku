@@ -16,15 +16,34 @@ cell_to_char(b, '●').       % Black player (b).
 cell_to_char(w, '◯').       % White player (w).
 
 % Convert a column index to a corresponding letter:
-column_nb_to_id(C, ID) :-
-    Code is C + 65,     % The character is encoded as an integer (65 = A, ..., Z = 90).
-    char_code(ID, Code).
+column_nb_to_id(Col, ID) :-
+    integer(Col),
+    Code is Col + 65,     % The character is encoded as an integer (65 = A, ..., Z = 90).
+    char_code(ID, Code), !.
+
+% Convert a column letter to a corresponding index:
+column_nb_to_id(Col, ID) :-
+    atom(ID),
+    atom_length(ID, 1),
+    upcase_atom(ID, Upper),
+    char_code(Upper, Code),
+    Col is Code - 65, !.  % The character is encoded as an integer (65 = A, ..., Z = 90).
 
 % Converts the indices to a more readable format:
-coordinates_to_id(R-C, ID) :-
-    column_nb_to_id(C, ColID),
-    RowID is R + 1,
-    format(atom(ID), '~w~w', [ColID, RowID]).
+coordinates_to_id(Row-Col, ID) :-
+    integer(Row),
+    integer(Col),
+    column_nb_to_id(Col, ColID),
+    RowID is Row + 1,
+    format(atom(ID), '~w~w', [ColID, RowID]), !.
+
+% Convert an ID back to its corresponding row and column indices:
+coordinates_to_id(Row-Col, ID) :-
+    atom(ID),
+    string_chars(ID, [ColChar|RowChars]),
+    column_nb_to_id(Col, ColChar),
+    catch(number_chars(RowID, RowChars), _, false),
+    Row is RowID - 1, !.
 
 % Displays the board:
 display_gomoku_board(Board) :-
@@ -32,9 +51,9 @@ display_gomoku_board(Board) :-
     Alignement is 32 - LastIndex,
     format('~*|   ', [Alignement]),
     forall(
-        between(0, LastIndex, C),
+        between(0, LastIndex, Col),
         (
-            column_nb_to_id(C, ID),
+            column_nb_to_id(Col, ID),
             format(' ~w', [ID])
         )
     ),
@@ -43,7 +62,7 @@ display_gomoku_board(Board) :-
         nth1(Y, Board, Row),
         (
             format('~*|~|~t~d~2+ ', [Alignement, Y]),
-            maplist([C]>>(cell_to_char(C, Char), format('─~w', [Char])), Row),
+            maplist([Col]>>(cell_to_char(Col, Char), format('─~w', [Char])), Row),
             write('─\n')
         )
     ),
@@ -109,18 +128,16 @@ request_cell_coordinates(Board, Row-Col) :-
     writeln('Choose your next move: (i.e. A1)'),
     repeat,
     read_line_to_string(user_input, Input),
+    atom_string(ID, Input),
     (
-        string_upper(Input, Input_Upper),
-        string_chars(Input_Upper, [ColChar|RowChars]),
         (
-            char_code(ColChar, Code),
-            catch(number_chars(Row1, RowChars), _, false),
-            Col is Code - 65,
-            Row is Row1 - 1,
-            are_valid_coordinates(Board, Row-Col) -> true;
-            writeln('You have to choose a valid position!'),
-            fail
-        )
+            coordinates_to_id(Row-Col, ID),
+            are_valid_coordinates(Board, Row-Col)
+        ) ->
+        true
+        ;
+        writeln('You have to choose a valid position!'),
+        fail
     ).
 
 % Asks the user to choose a next move:

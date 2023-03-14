@@ -6,16 +6,6 @@
 %====================================================%
 
 
-:- dynamic goal/1. % Number of stones to align in order to win.
-
-% Sets the goal:
-set_goal(Goal) :-
-    assertz(goal(Goal)).
-
-% Retrieves the goal:
-get_goal(Goal) :-
-    goal(Goal).
-
 % Static evaluation of the longest alignement:
 static_score(Board, Player, Score) :-
     get_last_index(Board, LastIndex),

@@ -18,12 +18,23 @@
 % Specify which color is playing the user, if any:
 :- dynamic player/1.
 
+% Number of stones to align in order to win:
+:- dynamic goal/1.
+
+% Sets the goal:
+set_goal(Goal) :-
+    assertz(goal(Goal)).
+    
+% Retrieves the goal:
+get_goal(Goal) :-
+    goal(Goal).
+
 % Help switching player's turn:
 other(b, w).
 other(w, b).
 
 % Start of game routine:
-begin_game(Firstplayer, Goal, BoardSize, Board) :-
+begin_game(Goal, BoardSize) :-
     % Sets the goal:
     set_goal(Goal),
     % Creates the board:
@@ -36,13 +47,6 @@ begin_game(Firstplayer, Goal, BoardSize, Board) :-
     display_gomoku_board(Board),
     % Start the first turn:
     turn(Board, Firstplayer, _).
-
-% End of game routine:
-end_game :-
-    % Reset the goal:
-    retractall(goal(_)),
-    % Asks the player if we should return to the menu:
-    request_continue_playing.
 
 % Establish a turn:
 turn(Board, Player, NewBoard) :-
@@ -72,3 +76,10 @@ turn(Board, Player, NewBoard) :-
     conclude_turn(NewBoard-Player-Move, NextPlayer, StartTime),
     % Recursive call to turn/3:
     turn(NewBoard, NextPlayer, _).
+
+% End of game routine:
+end_game :-
+    % Reset the goal:
+    retractall(goal(_)),
+    % Asks the player if we should return to the menu:
+    request_continue_playing.

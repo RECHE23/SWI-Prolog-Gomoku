@@ -12,17 +12,17 @@ play :-
     set_board_size(BoardSize),
     request_goal(BoardSize, Goal),
     request_players_color,
-    begin_game(Firstplayer, Goal, BoardSize, Board).
+    begin_game(Goal, BoardSize).
 
 % Starts the game with the standard parameters:
 gomoku(Size) :-
     request_players_color,
-    begin_game(Firstplayer, 5, Size, Board).
+    begin_game(5, Size).
 
 % Start a game of Tic-Tac-Toe:
 tictactoe :-
     request_players_color,
-    begin_game(Firstplayer, 3, 3, Board).
+    begin_game(3, 3).
 
 % Displays the welcome screen with the menu:
 :- initialization welcome_screen.

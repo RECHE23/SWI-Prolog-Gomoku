@@ -168,14 +168,7 @@ conclude_turn(NewBoard-Player-Move, StartTime) :-
     (
         get_goal(Goal),
         StaticScore >= Goal ->
-        (
-            draw_line,
-            writeln('\n                  ╔════════════════════════════╗'),
-            format('                  ║ The ~w player (~w) wins! ~47|║\n', [PlayersName, PlayersSymbol]),
-            writeln('                  ╚════════════════════════════╝\n'),
-            draw_line,
-            end_game
-        )
+        display_win(Player)
         ;
         true
     ).
@@ -206,7 +199,18 @@ request_continue_playing :-
         )
     ).
 
-% Informs the player that the game is a tie:
+% Informs the user who won the game:
+display_win(Player) :-
+    players_name(Player, PlayersName),
+    cell_to_char(Player, PlayersSymbol),
+    draw_line,
+    writeln('\n                  ╔════════════════════════════╗'),
+    format('                  ║ The ~w player (~w) wins! ~47|║\n', [PlayersName, PlayersSymbol]),
+    writeln('                  ╚════════════════════════════╝\n'),
+    draw_line,
+    end_game.
+
+% Informs the user that the game is a tie:
 display_tie :-
     draw_line,
     writeln('\n                  ╔══════════════════════════════╗'),

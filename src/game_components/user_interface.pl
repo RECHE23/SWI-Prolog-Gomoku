@@ -50,7 +50,7 @@ display_gomoku_board(Board) :-
     nl.
     
 % Asks the user to choose the board size:
-set_board_size(N) :-
+request_board_size(N) :-
     request_valid_integer(3, 26, 'Choose the size of the board: (min: 3, max: 26)', N).
 
 % Asks the user to choose the goal:

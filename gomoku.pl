@@ -9,7 +9,7 @@
 
 % Starts the game with custom parameters:
 play :-
-    set_board_size(BoardSize),
+    request_board_size(BoardSize),
     request_goal(BoardSize, Goal),
     request_players_color,
     begin_game(Goal, BoardSize).

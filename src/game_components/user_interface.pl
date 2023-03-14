@@ -151,8 +151,7 @@ introduce_turn(Player, StartTime) :-
     get_time(StartTime).
 
 % Concludes the turn:
-conclude_turn(NewBoard-Player-Move, NextPlayer, StartTime) :-
-    other(Player, NextPlayer),
+conclude_turn(NewBoard-Player-Move, StartTime) :-
     display_gomoku_board(NewBoard),
     static_score(NewBoard, Player, StaticScore),
     heuristic_score(NewBoard-Player-_, HeuristicScore),

@@ -73,7 +73,9 @@ turn(Board, Player, NewBoard) :-
         display_tie
     ),
     % Concludes the turn:
-    conclude_turn(NewBoard-Player-Move, NextPlayer, StartTime),
+    conclude_turn(NewBoard-Player-Move, StartTime),
+    % Switch player:
+    other(Player, NextPlayer),
     % Recursive call to turn/3:
     turn(NewBoard, NextPlayer, _).
 
